@@ -1,0 +1,22 @@
+{
+    "env": {
+      "mocha": true,
+      "cypress/globals": true,
+      "node": true,
+      "es2021": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:cypress/recommended"
+    ],
+    "plugins": [
+      "cypress"
+    ],
+    "rules": {
+      "no-undef": "off",  // Desativar a regra de 'no-undef' para essas palavras-chave
+      "cypress/no-force": "error",
+      "cypress/assertion-before-screenshot": "error",
+      "cypress/no-pause": "error"
+    }
+  }
+   
