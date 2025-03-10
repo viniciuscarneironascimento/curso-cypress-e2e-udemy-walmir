@@ -22,7 +22,7 @@ describe('Scenarios where authentication is a pre-condition', () => {
     cy.wait('@getNotes')
   })
 
-  it.only('successfully submits the settings form', () => {
+  it('successfully submits the settings form', () => {
     cy.intercept('POST', '**/prod/billing').as('paymentRequest')
 
     cy.fillSettingsFormAndSubmit()
@@ -32,4 +32,25 @@ describe('Scenarios where authentication is a pre-condition', () => {
       .its('state')
       .should('be.equal', 'Complete')
   })
+
+  it('logs out', () => {
+    cy.visit('/')
+    cy.wait('@getNotes')
+
+    // Se a tela for menor que o breakpoint, expande o menu
+    if (Cypress.config('viewportWidth') < Cypress.config('viewportWidthBreakpoint')) {
+        cy.get('.navbar-toggle.collapsed')
+        .should('be.visible')
+        .click() // Expande o menu
+      cy.get('.navbar-collapse') // Garante que o menu está expandido
+      .should('have.class', 'in') // 'in' é geralmente a classe que indica o menu expandido
+    }
+  
+    // Agora que o menu está visível, clica no link 'Logout'
+    cy.contains('.nav a', 'Logout').click()
+  
+    // Verifica se o campo de email está visível após o logout
+    cy.get('#email').should('be.visible')
+  }) 
+
 })
