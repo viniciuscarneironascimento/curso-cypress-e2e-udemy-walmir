@@ -15,23 +15,23 @@ Cypress.Commands.add('fillSignupFormAndSubmit', (email, password) => {
   })
 })
 
-Cypress.Commands.add('login', 
-  (username = Cypress.env('USER_EMAIL') , 
+Cypress.Commands.add('login',
+  (username = Cypress.env('USER_EMAIL'),
     password = Cypress.env('USER_PASSWORD')) => {
-      
+
     cy.intercept('GET', '**/notes').as('getNotes')
 
     cy.visit('/login')
     cy.get('#email').type(username)
-    cy.get('#password').type(password, {log: false})
+    cy.get('#password').type(password, { log: false })
     cy.contains('button', 'Login').click()
 
     cy.wait('@getNotes')
 
     cy.contains('h1', 'Your Notes').should('be.visible')
-})
+  })
 
-Cypress.Commands.add('sessionLogin2', () =>{
+Cypress.Commands.add('sessionLogin2', () => {
   const sessionLogin = () => cy.login()
   cy.session('sessionLogin', sessionLogin)
 })
@@ -43,4 +43,59 @@ Cypress.Commands.add('sessionLogin', (
   const login = () => cy.login(username, password)
   cy.session(username, login)
 })
-  
+
+//Variável que recebe uma função para anexar um arquivo (selectile)
+const attachFileHandler = () => {
+  cy.get('#file').selectFile('cypress/fixtures/example.json')
+}
+
+//COmando customizado que recebe uma notação como argumento e "anexar = false"
+Cypress.Commands.add('createNote', (note, attachFile = false) => {
+  //Visita a página (a chamada da session de login deve ser chamada antes desta função customizada)
+  cy.visit('/notes/new')
+  //Insere o texto da notação passada por parâmetro
+  cy.get('#content').type(note)
+
+  //Se "attachFile = true", ou seja, se "anexar = true" (indico por parâmetro que quero anexar um arquivo)
+  if (attachFile) {
+    //Basta chamar a variável (que é uma função) para executar os comandos dela
+    attachFileHandler()
+  }
+
+  cy.contains('button', 'Create').click()
+
+  cy.contains('.list-group-item', note).should('be.visible')
+})
+
+Cypress.Commands.add('editNote', (note, newNoteValue, attachFile = false) => {
+  cy.intercept('GET', '**/notes/**').as('getNote')
+
+  cy.contains('.list-group-item', note).click()
+  cy.wait('@getNote')
+
+  cy.get('#content')
+    .as('contentField')
+    .clear()
+  cy.get('@contentField')
+    .type(newNoteValue)
+
+  if (attachFile) {
+    attachFileHandler()
+  }
+
+  cy.contains('button', 'Save').click()
+
+  cy.contains('.list-group-item', newNoteValue).should('be.visible')
+  cy.contains('.list-group-item', note).should('not.exist')
+})
+
+Cypress.Commands.add('deleteNote', note => {
+  cy.contains('.list-group-item', note).click()
+  cy.contains('button', 'Delete').click()
+
+  cy.get('.list-group-item')
+    .its('length')
+    .should('be.at.least', 1)
+  cy.contains('.list-group-item', note)
+    .should('not.exist')
+})

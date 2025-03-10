@@ -4,11 +4,11 @@ import { faker } from '@faker-js/faker/locale/en'
 
 describe('CRUD', () => {
 
-   /*beforeEach(() => {
-        cy.sessionLogin()
-    });*/
+  /*beforeEach(() => {
+       cy.sessionLogin()
+   });*/
 
-  it.only('CRUDs a note', () => {
+  it.skip('CRUDs a note', () => {
     //Cria uma variável que recebe 4 palavras aleatórias do faker
     const noteDescription = faker.lorem.words(4)
 
@@ -33,7 +33,7 @@ describe('CRUD', () => {
     cy.contains('.list-group-item', noteDescription)
       .should('be.visible')
       .click()
-    
+
     //Aguarda pelo retorno da requisição do intercept (que foi clicada no passo anterior)
     cy.wait('@getNote')
 
@@ -44,7 +44,7 @@ describe('CRUD', () => {
     cy.get('#content')
       .as('contentField')
       .clear()
-    
+
     //Digita o texto da nova notação (edit) e clica em salvar
     cy.get('@contentField')
       .type(updatedNoteDescription)
@@ -73,6 +73,80 @@ describe('CRUD', () => {
     //Então por fim valida que o item foi escluído
     cy.contains('.list-group-item', updatedNoteDescription)
       .should('not.exist')
+  })
+
+  it.skip('Adicionando arquivo com selectile', () => {
+    const noteDescription = faker.lorem.words(4)
+    let attachFile = false
+
+    cy.intercept('GET', '**/notes').as('getNotes')
+    cy.intercept('GET', '**/notes/**').as('getNote')
+    cy.sessionLogin()
+
+    cy.visit('/notes/new')
+    cy.get('#content').type(noteDescription)
+
+    if (attachFile) {
+      cy.get('#file').selectFile('cypress/fixtures/example.json')
+    }
+
+    cy.contains('button', 'Create').click()
+
+    cy.wait('@getNotes')
+    cy.contains('.list-group-item', noteDescription)
+      .should('be.visible')
+      .click()
+    cy.wait('@getNote')
+
+    const updatedNoteDescription = faker.lorem.words(4)
+
+    cy.get('#content')
+      .as('contentField')
+      .clear()
+    cy.get('@contentField')
+      .type(updatedNoteDescription)
+
+    attachFile = true
+
+    if (attachFile) {
+      cy.get('#file').selectFile('cypress/fixtures/example.json')
+    }
+
+    cy.contains('button', 'Save').click()
+    cy.wait('@getNotes')
+
+    cy.contains('.list-group-item', noteDescription).should('not.exist')
+    cy.contains('.list-group-item', updatedNoteDescription)
+      .should('be.visible')
+      .click()
+    cy.wait('@getNote')
+    cy.contains('button', 'Delete').click()
+    cy.wait('@getNotes')
+
+    cy.get('.list-group-item')
+      .its('length')
+      .should('be.at.least', 1)
+    cy.contains('.list-group-item', updatedNoteDescription)
+      .should('not.exist')
+  })
+
+  it.only('CRUDs a note usando comandos customizados', () => {
+    const noteDescription = faker.lorem.words(4)
+
+    cy.intercept('GET', '**/notes').as('getNotes')
+    cy.sessionLogin()
+
+    cy.createNote(noteDescription)
+    cy.wait('@getNotes')
+
+    const updatedNoteDescription = faker.lorem.words(4)
+    const attachFile = true
+
+    cy.editNote(noteDescription, updatedNoteDescription, attachFile)
+    cy.wait('@getNotes')
+
+    cy.deleteNote(updatedNoteDescription)
+    cy.wait('@getNotes')
   })
 
   it.skip('visitando página chamando função sesssion para logar pela primeira vez (created)', () => {
