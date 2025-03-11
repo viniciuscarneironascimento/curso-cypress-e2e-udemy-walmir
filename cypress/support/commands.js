@@ -36,13 +36,35 @@ Cypress.Commands.add('sessionLogin2', () => {
   cy.session('sessionLogin', sessionLogin)
 })
 
-Cypress.Commands.add('sessionLogin', (
+Cypress.Commands.add('sessionLogin3', (
   username = Cypress.env('USER_EMAIL'),
   password = Cypress.env('USER_PASSWORD')
 ) => {
   const login = () => cy.login(username, password)
   cy.session(username, login)
 })
+
+//Novo modelo proposto pelo ChatGpt
+Cypress.Commands.add('sessionLogin', (
+  username = Cypress.env('USER_EMAIL'),
+  password = Cypress.env('USER_PASSWORD')
+) => {
+  // Verifica se username e password são válidos
+  if (typeof username !== 'string' || typeof password !== 'string') {
+    throw new Error('O username e password devem ser strings válidas.');
+  }
+
+  const login = () => cy.login(username, password);
+
+  // Usar `username` diretamente como uma chave de sessão
+  cy.session(username, login, {
+    validate() {
+      // Função de validação para garantir que a sessão seja reutilizada se já estiver válida
+      cy.get('body').should('exist');  // Exemplo: validação básica, você pode adicionar algo mais complexo aqui
+    }
+  });
+});
+
 
 //Variável que recebe uma função para anexar um arquivo (selectile)
 const attachFileHandler = () => {
