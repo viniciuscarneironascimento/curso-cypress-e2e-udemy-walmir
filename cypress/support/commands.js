@@ -36,7 +36,7 @@ Cypress.Commands.add('sessionLogin2', () => {
   cy.session('sessionLogin', sessionLogin)
 })
 
-Cypress.Commands.add('sessionLogin3', (
+Cypress.Commands.add('sessionLogin', (
   username = Cypress.env('USER_EMAIL'),
   password = Cypress.env('USER_PASSWORD')
 ) => {
@@ -45,7 +45,7 @@ Cypress.Commands.add('sessionLogin3', (
 })
 
 //Novo modelo proposto pelo ChatGpt substituindo a versão acima
-Cypress.Commands.add('sessionLogin', (
+Cypress.Commands.add('sessionLogin3', (
   username = Cypress.env('USER_EMAIL'),
   password = Cypress.env('USER_PASSWORD')
 ) => {
