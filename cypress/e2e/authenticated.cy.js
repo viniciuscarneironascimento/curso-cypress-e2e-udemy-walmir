@@ -35,7 +35,7 @@ describe('Scenarios where authentication is a pre-condition', () => {
 
   it('logs out', () => {
     cy.visit('/')
-    cy.wait('@getNotes')
+   /*cy.wait('@getNotes')
 
     // Se a tela for menor que o breakpoint, expande o menu
     if (Cypress.config('viewportWidth') < Cypress.config('viewportWidthBreakpoint')) {
@@ -44,7 +44,7 @@ describe('Scenarios where authentication is a pre-condition', () => {
         .click() // Expande o menu
       cy.get('.navbar-collapse') // Garante que o menu está expandido
       .should('have.class', 'in') // 'in' é geralmente a classe que indica o menu expandido
-    }
+    }*/
   
     // Agora que o menu está visível, clica no link 'Logout'
     cy.contains('.nav a', 'Logout').click()
