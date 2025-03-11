@@ -35,8 +35,7 @@ describe('Scenarios where authentication is a pre-condition', () => {
 
   it('logs out', () => {
     cy.visit('/')
-    //cy.wait('@getNotes')
-    cy.wait(2000)
+    cy.wait('@getNotes')
 
     // Se a tela for menor que o breakpoint, expande o menu
     /*if (Cypress.config('viewportWidth') < Cypress.config('viewportWidthBreakpoint')) {
