@@ -1,4 +1,4 @@
-# Nome do projeto: curso-cypress-e2e-udemy-walmir (public)
+# Projeto: curso-cypress-e2e-udemy-walmir (public)
 [https://github.com/viniciuscarneironascimento/curso-cypress-e2e-udemy-walmir](https://github.com/viniciuscarneironascimento/curso-cypress-e2e-udemy-walmir)
 
 ---
